@@ -22,37 +22,44 @@ enum layer_names {
     BASED,
     FN1,
     FN2,
-    MACRO
+    MACRO,
+    FNORM
 };
 
 // Defines the keycodes used by our macros in process_record_user
 enum custom_keycodes {
     DESKLEFT = SAFE_RANGE,
     DESKRGHT,
-    ALTTAB
+    ALTTAB,
+    CTALDE
 };
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     /* Base */
     [BASED] = LAYOUT(
-        KC_Q,         KC_W,   KC_F,   KC_P,           KC_B,            KC_J,           KC_L,           KC_U,            KC_Y,   ALTTAB,   
-        KC_A,         KC_R,   KC_S,   LT(FN1, KC_T),  KC_G,            KC_M,           LT(FN2, KC_N),  LT(MACRO, KC_E), KC_I,   KC_O,
-        LGUI_T(KC_Z), KC_X,   KC_C,   KC_D,           LSFT_T(KC_BSPC), LCTL_T(KC_SPC), KC_V,           KC_K,            KC_H,   KC_ENTER
+        KC_Q,         KC_W,   KC_F,              KC_P,           KC_B,            KC_J,           KC_L,           KC_U,            KC_Y,   ALTTAB,   
+        KC_A,         KC_R,   LT(FNORM, KC_S),   LT(FN1, KC_T),  KC_G,            KC_M,           LT(FN2, KC_N),  LT(MACRO, KC_E), KC_I,   KC_O,
+        LGUI_T(KC_Z), KC_X,   KC_C,              KC_D,           LSFT_T(KC_BSPC), LCTL_T(KC_SPC), KC_V,           KC_K,            KC_H,   KC_ENTER
     ),
     [FN1] = LAYOUT(
-        KC_ESC,    XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   KC_LBRC,   KC_RBRC,  
-        KC_TAB,    DESKLEFT,  DESKRGHT,  XXXXXXX,   XXXXXXX,   XXXXXXX,   KC_LEFT,   KC_DOWN,   KC_UP,     KC_RIGHT,  
-        XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   KC_LALT,   _______,   KC_BSLS,   KC_COMM,   KC_DOT,    KC_SLSH
+        XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   KC_LBRC,   KC_RBRC,   KC_GRV,  
+        XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   KC_LEFT,   KC_UP,     KC_DOWN,   KC_RIGHT,  
+        XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   ALTTAB,    XXXXXXX,   KC_BSLS,   KC_COMM,   KC_DOT,    KC_SLSH
     ),
     [FN2] = LAYOUT(
-        KC_7,      KC_8,      KC_9,      XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX, 
-        KC_4,      KC_5,      KC_6,      XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   KC_ENTER,
-        KC_1,      KC_2,      KC_3,      KC_0,      _______,   _______,   XXXXXXX,   XXXXXXX,   XXXXXXX,   RESET
+        KC_7,      KC_8,      KC_9,      XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   KC_SCLN,   KC_SCLN, 
+        KC_4,      KC_5,      KC_6,      XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   KC_GRV,    KC_QUOT,
+        KC_1,      KC_2,      KC_3,      KC_0,      KC_LSFT,   XXXXXXX,   XXXXXXX,   XXXXXXX,   KC_MINS,   KC_EQL
     ),
     [MACRO] = LAYOUT(
-        RESET,     XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX, 
-        XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,
-        XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   DESKLEFT,  DESKRGHT,  XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX
+        KC_ESC,    XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX, 
+        KC_TAB,    KC_DEL,    XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,
+        RESET,     CTALDE,    XXXXXXX,   XXXXXXX,   DESKLEFT,  DESKRGHT,  XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX
+    ),
+    [FNORM] = LAYOUT(
+        XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   KC_F1,     KC_F2,     KC_F3,     KC_F4, 
+        XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   KC_F5,     KC_F6,     KC_F7,     KC_F8,
+        XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   XXXXXXX,   KC_F9,     KC_F10,    KC_F11,    KC_F12
     )
 };
 
@@ -94,6 +101,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 register_code(KC_TAB);
               } else {
                 unregister_code(KC_TAB);
+            }
+            break;
+        case CTALDE:
+            if (record->event.pressed) {
+                // when keycode QMKURL is pressed
+                SEND_STRING(SS_DOWN(X_LCTL));
+                SEND_STRING(SS_DOWN(X_LALT));
+                SEND_STRING(SS_DOWN(X_DEL));
+            } else {
+                // when keycode QMKURL is released
+                SEND_STRING(SS_UP(X_LCTL));
+                SEND_STRING(SS_UP(X_LALT));
+                SEND_STRING(SS_UP(X_DEL));
             }
             break;
     }
